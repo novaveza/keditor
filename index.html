@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+
+    <link rel="stylesheet" href="./bootstrap/css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="./bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./bootstrap/css/bootstrap.css">
+
+    <script src="./jquery/jquery-3.5.1.min.js"></script>
+    <script src="./jquery/jquery-ui.js"></script>
+
+    <script src="./bootstrap/js/bootstrap.min.js"></script>
+    <script src="./bootstrap/js/bootstrap.min.js"></script>
+    <script src="./bootstrap/js/bootstrap.bundle.js"></script> 
+
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+    
+    <title>K-editor 2020</title>
+    
+    
+</head>
+<body style="padding: 1rem; background-color:grey ;">
+
+    <label style="border: 1px solid; padding:0.5rem; background-color:#E5E7E9;">
+        <div ><input type="button" value="A+" class="increaseFont"></input></div>
+        <div><input type="button" value="A-" class="decreaseFont"></input></div>
+
+        <input type="text" id="sizeIn">
+
+        <button class="guardar"><span class="fas fa-save" onclick="Export2Doc('editorWYS', 'prueba_1')"></span></button>
+
+        <button class="bold" data-type="bold"><span class="fa fa-bold"></span></button>
+
+        <button class="italic" data-type="italic"><span class="fa fa-italic"></span></button>
+
+        <button class="js-boton" data-type="justifyLeft"><span class="fa fa-align-left"></span></button>
+
+        <button class="js-boton" data-type="justifyCenter"><span class="fa fa-align-center"></span></button>
+
+        <button class="js-boton" data-type="justifyRight"><span class="fa fa-align-right"></span></button>
+
+        <button class="js-boton" data-type="justifyFull"><span class="fa fa-align-justify"></span></button>
+
+        <button class="subrayar" data-type="underline"><span class="fas fa-underline"></span></button>
+
+        <button class="tachar" data-type="line-through"><span class="fas fa-strikethrough"></span></button>
+
+        <button class="destacar" data-type="foreColor"><span class="fas fa-highlighter"></span></button>
+
+    </label> 
+<br>
+<br>
+        <div id="editorWYS" contenteditable="true" style="height: 1344px; width:816px; background-color: white; margin-left: 25%;">
+        Lo que hay dentro de este div se puede editar.
+        
+        </div>
+    
+    
+   
+    <script>
+
+        //Bold
+        $(document).ready(function() {
+            $(".bold").mousedown(function(event) {
+
+            document.execCommand('bold', false, null);
+        });
+
+        })
+
+        //Italica
+        $(document).ready(function() {
+            $(".italic").mousedown(function(event) {
+
+                document.execCommand('italic', false, null);
+        });
+
+        })
+
+        // Subrayar texto
+        $(document).ready(function() {
+
+        $(".subrayar").mousedown(function(event) {
+            
+            document.execCommand('underline', false, null);
+
+        });
+
+        });
+
+
+        // Tachar texto
+        $(document).ready(function() {
+
+            $(".tachar").mousedown(function(event) {
+    
+            document.execCommand('strikeThrough', false, null);
+
+            });
+
+        });
+
+        // Destacar texto
+        $(document).ready(function() {
+
+            $(".destacar").mousedown(function(event) {
+
+            document.execCommand('backColor', false, '#F1C40F', null);
+
+        });
+
+        });
+
+        //Izquierda Centrado Derecha Justificado
+        $(document).ready(function() {
+
+            $(".js-boton").mousedown(function(event) {
+
+            event.preventDefault(); // Esto no es necesario, es por vicio xD
+
+            var comando = $(this).attr('data-type');
+
+            document.execCommand(comando, false, null);
+
+        });
+
+        });
+
+        //Tamaño de letra
+        $(document).ready(function() {
+            
+        $(".increaseFont,.decreaseFont").click(function(){
+
+            var type=  $(this).val();
+            var curFontSize = $('#editorWYS').css('font-size');
+            $("#sizeIn").val(curFontSize);
+
+        if(type =='A+'){ 
+
+            $('#editorWYS').css('font-size', parseInt(curFontSize)+1);      
+                
+        }
+        else{
+            
+                $('#editorWYS').css('font-size', parseInt(curFontSize)-1);
+        }
+                $("#sizeIn").val(curFontSize);
+        });
+     });
+
+    function Export2Doc(element, filename = ''){
+    var preHtml = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
+    var postHtml = "</body></html>";
+    var html = preHtml+document.getElementById(element).innerHTML+postHtml;
+
+    var blob = new Blob(['ufeff', html], {
+        type: 'application/msword'
+    });
+    
+    // Specify link url
+    var url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
+    
+    // Specify file name
+    filename = filename?filename+'.doc':'document.doc';
+    
+    // Create download link element
+    var downloadLink = document.createElement("a");
+
+    document.body.appendChild(downloadLink);
+    
+    if(navigator.msSaveOrOpenBlob ){
+        navigator.msSaveOrOpenBlob(blob, filename);
+    }else{
+        // Create a link to the file
+        downloadLink.href = url;
+        
+        // Setting the file name
+        downloadLink.download = filename;
+        
+        //triggering the function
+        downloadLink.click();
+    }
+    
+    document.body.removeChild(downloadLink);
+}
+
+    </script>
+
+
+
+</body>
+</html>
